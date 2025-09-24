@@ -1,0 +1,74 @@
+
+# OS / Editors
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Git merge artifacts
+*.orig
+
+# Python (backend)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pytest_cache/
+.mypy_cache/
+.pytype/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+.venv/
+venv/
+backend/venv/
+ENV/
+
+# Env/secrets
+.env
+.env.*
+backend/.env
+backend/.env.*
+
+# Python build
+build/
+dist/
+.eggs/
+*.egg-info/
+
+# Logs
+*.log
+logs/
+
+# Node/React (frontend)
+node_modules/
+frontend/node_modules/
+frontend/build/
+frontend/.cache/
+
+# TypeScript
+*.tsbuildinfo
+
+# Coverage
+coverage/
+frontend/coverage/
+
+# Misc caches
+.next/
+.cache/
+.svelte-kit/
+
+# Package lock files (optional to ignore; keep if you prefer)
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
+
+# Temp files
+*.tmp
+
+# Notebooks
+.ipynb_checkpoints/
