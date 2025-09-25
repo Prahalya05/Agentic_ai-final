@@ -1,7 +1,8 @@
 // src/App.tsx
-const API_BASE = (process.env.REACT_APP_API_URL as string) || 'http://localhost:8000';
 import React, { useState } from 'react';
 import './App.css';
+
+const API_BASE = (process.env.REACT_APP_API_URL as string) || 'https://your-backend.onrender.com'; // or leave localhost for dev
 
 type ItineraryActivity = { time: string; item: string; details: string };
 type ItineraryDay = { day: number; activities: ItineraryActivity[] };
