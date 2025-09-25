@@ -1,265 +1,235 @@
-# AI Travel Vlogger Simulator
+# AI Travel Vlogger
 
-A multi-agent AI system that generates personalized travel itineraries with day-by-day blog-style narration. Users input a location, and AI agents collaborate to find attractions, suggest local foods, build itineraries, and create engaging vlog-style content.
+AI Travel Vlogger is a full‑stack application that generates day‑by‑day travel blog itineraries. A FastAPI backend orchestrates multiple AI agents to discover attractions, suggest local foods, build a balanced itinerary, and narrate each day in a vlogger tone. A React frontend renders the results as a clean, scrollable blog.
 
-## 🎯 What This Project Does
+## Table of Contents
 
-- **Explorer Agent**: Finds 5-10 attractions in your chosen location
-- **Foodie Agent**: Suggests local foods and restaurants
-- **Guide Agent**: Creates day-by-day itineraries based on your preferences
-- **Vlogger Agent**: Narrates the trip in engaging blog/vlog style
-- **React Frontend**: Beautiful day-by-day travel blog UI
+- What the project does
+- Architecture and technology
+- Data contracts (API)
+- Local development setup
+- Production deployment (Render + Netlify)
+- Configuration (environment variables)
+- Troubleshooting
+- Project structure
+- Customization notes
+- License
 
-## 🚀 Quick Start
+## What the project does
 
-### Prerequisites
+- Accepts a user‑provided location and optional preferences (number of days, style).
+- Runs a sequence of agents:
+  - Explorer Agent: finds 5–10 attractions.
+  - Foodie Agent: suggests local food items or venues.
+  - Guide Agent: builds a multi‑day itinerary using attractions and foods.
+  - Vlogger Agent: narrates each day in an engaging blog/vlog voice.
+- Returns a JSON payload with attractions, foods, itinerary, narration, and an evaluation score.
+- Renders a day‑by‑day blog UI in React.
 
-- **Python 3.8+** (download from [python.org](https://python.org))
-- **Node.js 16+** (download from [nodejs.org](https://nodejs.org))
-- **Google AI API Key** (free at [makersuite.google.com](https://makersuite.google.com))
+## Architecture and technology
 
-### Step 1: Clone and Setup Backend
+- Backend: FastAPI, LangChain/LangGraph, Google Gemini (via `langchain-google-genai`).
+- Frontend: React (Create React App) + TypeScript.
+- Optional tool: Tavily web search (disabled by default for Gemini; demo stubs provided).
+- Auth: none by default; add a gateway/keys if deploying publicly.
 
-1. **Clone the repository** (or download as ZIP):
-   ```bash
-   git clone <your-repo-url>
-   cd ai-travel-vlogger
-   ```
+## Data contracts (API)
 
-2. **Navigate to backend**:
-   ```bash
-   cd backend
-   ```
+Endpoint
+- POST `/generate`
 
-3. **Create virtual environment**:
-   ```bash
-   # Windows PowerShell
-   python -m venv venv
-   .\venv\Scripts\Activate.ps1
-   
-   # Windows Command Prompt
-   python -m venv venv
-   venv\Scripts\activate
-   
-   # macOS/Linux
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
+Request body
+```json
+{
+  "location": "Tokyo",
+  "user_prefs": {
+    "duration": 3,
+    "style": "fun"
+  }
+}
+```
 
-4. **Install Python dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+Response payload
+```json
+{
+  "location": "Tokyo",
+  "user_prefs": { "duration": 3, "style": "fun" },
+  "attractions": [ { "name": "...", "description": "...", "category": "..." } ],
+  "foods": [ { "name": "...", "description": "...", "type": "..." } ],
+  "itinerary": [
+    { "day": 1, "activities": [ { "time": "Morning", "item": "...", "details": "..." } ] }
+  ],
+  "narration": [ "Day 1 narration..." ],
+  "evaluation_score": 8.7
+}
+```
 
-5. **Create environment file**:
-   ```bash
-   # Windows PowerShell
-   notepad .env
-   
-   # macOS/Linux
-   nano .env
-   ```
+## Local development setup
 
-6. **Add your API keys to `.env`**:
-   ```env
-   GOOGLE_API_KEY=your_google_ai_api_key_here
-   GEMINI_MODEL=gemini-1.5-flash
-   TAVILY_API_KEY=your_tavily_key_here
-   DEMO_MODE=false
-   ```
+Prerequisites
+- Python 3.10+
+- Node.js 16+
+- Google AI API key (GOOGLE_API_KEY)
 
-   **Getting API Keys**:
-   - **Google AI**: Go to [makersuite.google.com](https://makersuite.google.com) → Get API Key (free)
-   - **Tavily** (optional): Go to [tavily.com](https://tavily.com) → Sign up for free tier
+Clone and open
+```bash
+git clone <your-repo-url>
+cd ai-travel-vlogger
+```
 
-7. **Start the backend server**:
-   ```bash
-   uvicorn main:app --reload --host 0.0.0.0 --port 8000
-   ```
-   
-   You should see:
-   ```
-   INFO:     Uvicorn running on http://0.0.0.0:8000
-   ```
+Backend
+```bash
+cd backend
+python -m venv venv
+# Windows PowerShell
+.\venv\Scripts\Activate.ps1
+# macOS/Linux
+# source venv/bin/activate
 
-### Step 2: Setup Frontend
+pip install -r requirements.txt
 
-1. **Open a new terminal** and navigate to frontend:
-   ```bash
-   cd frontend
-   ```
+# Create .env (same directory as main.py)
+# Example values:
+```
+GOOGLE_API_KEY=your_gemini_key
+GEMINI_MODEL=gemini-1.5-flash
+DEMO_MODE=true
+# Optional
+TAVILY_API_KEY=your_tavily_key
+```
 
-2. **Install Node.js dependencies**:
-   ```bash
-   npm install
-   ```
+# Run backend
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
 
-3. **Start the React development server**:
-   ```bash
-   npm start
-   ```
-   
-   This will automatically open http://localhost:3000 in your browser.
+Frontend
+```bash
+cd ../frontend
+npm install
 
-### Step 3: Test the Application
+# Create frontend/.env
+```
+REACT_APP_API_URL=http://localhost:8000
+# Optional extras used if you add maps/images later
+REACT_APP_GOOGLE_MAPS_API_KEY=
+REACT_APP_UNSPLASH_API_KEY=
+```
 
-1. **Open your browser** to http://localhost:3000
-2. **Enter a location** (e.g., "Tokyo", "Paris", "New York")
-3. **Choose duration** (1-10 days) and style (Fun, Luxury, Budget, Foodie)
-4. **Click Generate** and watch the AI create your travel itinerary!
+```bash
+npm start
+# Open http://localhost:3000
+```
 
-## 🛠️ Project Structure
+Notes
+- DEMO_MODE=true returns mock data without calling Gemini (useful for development).
+- When ready to use Gemini, set DEMO_MODE=false and ensure GOOGLE_API_KEY is valid.
+
+## Production deployment (Render + Netlify)
+
+Backend on Render
+1. Create a new Web Service on Render and connect this repository.
+2. Root directory: `ai-travel-vlogger/backend`
+3. Build command: `pip install -r requirements.txt`
+4. Start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+5. Environment variables (Render → Settings → Environment):
+   - `GOOGLE_API_KEY=...`
+   - `GEMINI_MODEL=gemini-1.5-flash`
+   - `DEMO_MODE=false` (or `true` for mock data)
+   - Optional: `TAVILY_API_KEY=...`
+6. CORS: in `backend/main.py`, set `allow_origins` to include your Netlify site:
+   - `https://<your-site>.netlify.app` and `http://localhost:3000`
+
+Frontend on Netlify
+1. New site from Git. Base directory: `ai-travel-vlogger/frontend`
+2. Build command: `npm install && npm run build`
+3. Publish directory: `build`
+4. Environment variables (Site settings → Environment):
+   - `REACT_APP_API_URL=https://<your-backend-on-render>.onrender.com`
+   - Optional: `REACT_APP_GOOGLE_MAPS_API_KEY`, `REACT_APP_UNSPLASH_API_KEY`
+5. Redeploy after changing environment variables (CRA inlines them at build time).
+
+Alternative (no code change): Netlify redirect
+- Add `frontend/public/_redirects` with:
+```
+/generate  https://<your-backend-on-render>.onrender.com/generate  200
+```
+- Then the frontend may POST `/generate` and Netlify forwards to Render.
+
+## Configuration (environment variables)
+
+Backend `.env`
+- `GOOGLE_API_KEY` (required for Gemini)
+- `GEMINI_MODEL` (default `gemini-1.5-flash`)
+- `DEMO_MODE` (`true` or `false`)
+- `TAVILY_API_KEY` (optional)
+
+Frontend `.env`
+- `REACT_APP_API_URL` (required in production)
+- `REACT_APP_GOOGLE_MAPS_API_KEY` (optional)
+- `REACT_APP_UNSPLASH_API_KEY` (optional)
+
+Security note
+- Frontend env vars are public after build. Put sensitive keys in backend `.env` and proxy via backend if needed.
+
+## Troubleshooting
+
+Build fails on Netlify (eslint/CI)
+- Ensure imports are at the top of each file.
+- If necessary, set `CI=false` in Netlify environment to avoid treating warnings as errors.
+
+Frontend shows “Cannot POST /generate”
+- In production, CRA proxy does not apply. Ensure `REACT_APP_API_URL` points to your Render backend and that the code uses `fetch(`${API_BASE}/generate`)`.
+- Or add the Netlify redirect shown above.
+
+CORS errors
+- The origin must match exactly (protocol, host). Update `allow_origins` in `main.py` to include your Netlify URL.
+
+500 errors or JSON parsing
+- Set `DEMO_MODE=true` to validate the full UI.
+- The backend includes tolerant JSON extraction; check server logs for the first failing agent.
+
+429 / quota exceeded
+- Temporary: set `DEMO_MODE=true`.
+- Ensure keys and quotas are active for your account.
+
+## Project structure
 
 ```
 ai-travel-vlogger/
-├── backend/                 # FastAPI backend
-│   ├── agents/             # AI agent implementations
-│   │   ├── explorer.py     # Finds attractions
-│   │   ├── foodie.py       # Suggests local foods
-│   │   ├── guide.py        # Builds itineraries
-│   │   ├── vlogger.py      # Creates narration
-│   │   └── evaluator.py    # Scores output
-│   ├── api/                # REST API endpoints
-│   ├── graph/              # LangGraph workflow
-│   ├── models/             # Data models
-│   ├── tools/              # External tools (web search)
-│   ├── main.py             # FastAPI app entry point
-│   └── requirements.txt    # Python dependencies
-├── frontend/               # React frontend
-│   ├── src/
-│   │   ├── App.tsx         # Main React component
-│   │   └── App.css         # Styling
-│   ├── public/
-│   └── package.json        # Node.js dependencies
-└── README.md               # This file
+├─ backend/
+│  ├─ agents/
+│  │  ├─ explorer.py
+│  │  ├─ foodie.py
+│  │  ├─ guide.py
+│  │  ├─ vlogger.py
+│  │  └─ evaluator.py
+│  ├─ api/
+│  │  └─ endpoints.py
+│  ├─ graph/
+│  │  └─ workflow.py
+│  ├─ models/
+│  │  └─ state.py
+│  ├─ tools/
+│  │  └─ web_search.py
+│  ├─ main.py
+│  └─ requirements.txt
+└─ frontend/
+   ├─ public/
+   │  ├─ index.html
+   │  └─ _redirects (optional)
+   ├─ src/
+   │  ├─ App.tsx
+   │  ├─ App.css
+   │  └─ index.tsx
+   └─ package.json
 ```
 
-## 🔧 Configuration Options
+## Customization notes
 
-### Environment Variables
+- To change AI behavior, adjust system prompts in `backend/agents/*.py`.
+- To change flow or add agents, edit `backend/graph/workflow.py`.
+- To add images or maps, read keys from frontend `.env` and implement fetches in `App.tsx` (or proxy via backend to keep keys private).
 
-Create a `.env` file in the `backend/` directory:
+## License
 
-```env
-# Required
-GOOGLE_API_KEY=your_google_ai_api_key
-
-# Optional (with defaults)
-GEMINI_MODEL=gemini-1.5-flash
-TAVILY_API_KEY=your_tavily_key
-DEMO_MODE=false
-```
-
-### Demo Mode
-
-Set `DEMO_MODE=true` in your `.env` file to test the UI without API calls:
-- Returns mock data instantly
-- No API costs
-- Perfect for development and demos
-
-## 🚨 Troubleshooting
-
-### Common Issues
-
-1. **"Could not import module main"**
-   - Make sure you're in the `backend/` directory
-   - Ensure virtual environment is activated
-   - Run `pip install -r requirements.txt`
-
-2. **"OPENAI_API_KEY not found"**
-   - You switched to Gemini, so this shouldn't appear
-   - If it does, check your `.env` file has `GOOGLE_API_KEY`
-
-3. **Frontend won't start**
-   - Make sure you're in the `frontend/` directory
-   - Run `npm install` first
-   - Check that Node.js is installed
-
-4. **"Port 8000 already in use"**
-   - Stop other services on port 8000
-   - Or change the port: `uvicorn main:app --reload --port 8001`
-
-5. **API calls fail**
-   - Check your Google AI API key is valid
-   - Ensure `DEMO_MODE=false` in `.env`
-   - Try `DEMO_MODE=true` to test without API calls
-
-### Getting Help
-
-- **Check the logs**: Look at the terminal running `uvicorn` for error details
-- **Browser console**: Press F12 in your browser to see frontend errors
-- **API testing**: Visit http://localhost:8000/docs for interactive API documentation
-
-## 🎨 Customization
-
-### Adding New Agent Types
-
-1. Create a new file in `backend/agents/`
-2. Implement the agent with `ChatGoogleGenerativeAI`
-3. Add it to the workflow in `backend/graph/workflow.py`
-
-### Changing the UI
-
-- Modify `frontend/src/App.tsx` for functionality
-- Update `frontend/src/App.css` for styling
-- The app uses modern CSS Grid and Flexbox
-
-### Different AI Models
-
-- Change `GEMINI_MODEL` in `.env` to:
-  - `gemini-1.5-flash` (fast, cheap)
-  - `gemini-1.5-pro` (more capable)
-  - `gemini-2.0-flash-exp` (experimental)
-
-## 📦 Deployment
-
-### Backend Deployment
-
-1. **Set up production environment**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. **Run with production server**:
-   ```bash
-   uvicorn main:app --host 0.0.0.0 --port 8000
-   ```
-
-### Frontend Deployment
-
-1. **Build for production**:
-   ```bash
-   cd frontend
-   npm run build
-   ```
-
-2. **Serve the `build/` folder** with any static file server
-
-### Environment Variables for Production
-
-- Set `GOOGLE_API_KEY` in your production environment
-- Remove or set `DEMO_MODE=false`
-- Consider adding rate limiting and authentication
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## 📄 License
-
-This project is open source. Feel free to use, modify, and distribute.
-
-## 🙏 Acknowledgments
-
-- Built with [FastAPI](https://fastapi.tiangolo.com/)
-- AI powered by [Google Gemini](https://ai.google.dev/)
-- Frontend with [React](https://reactjs.org/)
-- Workflow orchestration with [LangGraph](https://github.com/langchain-ai/langgraph)
-
----
-
-**Need help?** Check the troubleshooting section above or create an issue in the repository.
+This project is open source; you may use, modify, and distribute per the repository license.
