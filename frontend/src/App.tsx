@@ -28,7 +28,7 @@ function App() {
     setError(null);
     setData(null);
     try {
-      const res = await fetch('https://your-backend.onrender.com/generate', {
+      const res = await fetch('${API_BASE}/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
