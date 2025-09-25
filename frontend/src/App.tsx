@@ -1,3 +1,4 @@
+// src/App.tsx
 import React, { useState } from 'react';
 import './App.css';
 
@@ -50,9 +51,11 @@ function App() {
 
   return (
     <div className="App">
-      <nav className="nav">
-        <div className="brand">AI Travel Vlogger</div>
-      </nav>
+      {/* MODIFIED: Changed <nav> to <header> for semantic HTML */}
+      <header className="nav">
+        {/* MODIFIED: Changed <div> to <h1> for semantic HTML and accessibility */}
+        <h1 className="brand">AI Travel Vlogger</h1>
+      </header>
 
       <div className="controls">
         <input
@@ -82,14 +85,14 @@ function App() {
 
       {error && <div className="error">{error}</div>}
 
-      {data && (
+      {Array.isArray(data?.itinerary) && (
         <div className="timeline">
-          {data.itinerary?.map((day, idx) => (
+          {data!.itinerary.map((day, idx) => (
             <div key={day.day} className="card">
               <div className="card-header">Day {day.day}</div>
               <div className="card-body">
                 <ul className="activities">
-                  {day.activities.map((a, i) => (
+                  {Array.isArray(day.activities) && day.activities.map((a, i) => (
                     <li key={i}>
                       <span className="time">{a.time}</span>
                       <span className="item">{a.item}</span>
@@ -97,8 +100,8 @@ function App() {
                     </li>
                   ))}
                 </ul>
-                {data.narration?.[idx] && (
-                  <div className="narration">{data.narration[idx]}</div>
+                {Array.isArray(data?.narration) && data!.narration[idx] && (
+                  <div className="narration">{data!.narration[idx]}</div>
                 )}
               </div>
             </div>
