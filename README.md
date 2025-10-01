@@ -2,6 +2,13 @@
 
 AI Travel Vlogger is a full‑stack application that generates day‑by‑day travel blog itineraries. A FastAPI backend orchestrates multiple AI agents to discover attractions, suggest local foods, build a balanced itinerary, and narrate each day in a vlogger tone. A React frontend renders the results as a clean, scrollable blog.
 
+##Team Members:
+23Z308 - Archana S
+23Z336 - Krishnika K
+23Z354 - Prahalya S
+23Z380 - Yugandhara J
+24Z432 - Desigaa R
+24Z467 - Sarithra N
 ## Table of Contents
 
 - What the project does
